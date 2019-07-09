@@ -11,7 +11,7 @@ function CompareUserLists($userlist1, $userlist2)
 	{
 		# Write list to file and screen
 		$Writefile = "$location\InBoth-$Filename1~and~$Filename2.txt"
-        $Count = $ExistinBoth.count
+        	$Count = $ExistinBoth.count
 		#WriteDateHeader($Writefile)
 		"$Count exists in both lists" > $Writefile
 		$ExistinBoth >> $Writefile
@@ -25,7 +25,7 @@ function CompareUserLists($userlist1, $userlist2)
 	{
 		# Write list of users in UserList2 and Not in UserList1
 		$Writefile = "$location\In~$Filename2~NOT~$Filename1.txt"
-        $Count = $InUserList2Not1.count
+        	$Count = $InUserList2Not1.count
 		#WriteDateHeader($Writefile)
 		"$Count in $Filename2 but not in $Filename1" > $Writefile
 		$InUserList2Not1 >> $Writefile
@@ -41,7 +41,7 @@ function CompareUserLists($userlist1, $userlist2)
 	{
 		# Write list of users in Userlist1 but not UserList2
 		$Writefile = "$location\In~$Filename1~NOT~$Filename2.txt"
-        $Count = $InUserList1Not2.count
+        	$Count = $InUserList1Not2.count
 		#WriteDateHeader($Writefile)
 		"$Count in $Filename1 but not in $Filename2" > $Writefile
 		$InUserList1Not2 >> $Writefile
