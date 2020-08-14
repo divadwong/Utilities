@@ -1,13 +1,14 @@
-# This is about equivalent to using Get-AdGroupMember -Recursive but better and faster.
-# When it encounters a member it does not have permissiong to, it won't crash.
-# Script is from https://activedirectoryfaq.com/2019/04/recursive-list-of-group-members-in-ad/
-# Moved $groupsToNotResolve into Param
-# Added -OutputType "Email","Detailed","SAmAccountName","DistinguishedName" to create different outputs. - 08/13/20
-# Email and Detailed will output to file while SAmAccountName and DistinguishedName outputs to screen.
-# Comment out line 90 #$membersHT.Add($member, $groupsHT.$member) to not show excluded groups in the list.
-# Comment out lines 94 #resolve-members-recursive $groupsHT.$member which is not needed and can potentially cause an infinite loop.
-# Added Write-Verbose lines for troubleshooting.  Set $VerbosePreference = "continue" to troubleshoot
-# Added Tracking of Groups it resolved.
+<# This is about equivalent to using Get-AdGroupMember -Recursive but better and faster.
+ When it encounters a member it does not have permissiong to, it won't crash.
+ Script is from https://activedirectoryfaq.com/2019/04/recursive-list-of-group-members-in-ad/
+ Moved $groupsToNotResolve into Param
+ Added -OutputType "Email","Detailed","SAmAccountName","DistinguishedName" to create different outputs. 
+ Email and Detailed will output to file while SAmAccountName and DistinguishedName outputs to screen.
+ Comment out line 91 #$membersHT.Add($member, $groupsHT.$member) to not show excluded groups in the list.
+ Comment out lines 95 #resolve-members-recursive $groupsHT.$member which is not needed and can potentially cause an infinite loop.
+ Added Write-Verbose lines for troubleshooting.  Set $VerbosePreference = "continue" to troubleshoot
+ Added Tracking of Groups it resolved ($GroupsIn)
+#> 
 param(
 [Parameter(Mandatory = $true)][String]$groupName
 [Parameter(Mandatory = $false)][AllowEmptyCollection()][String[]]$groupsToNotResolve,
@@ -91,7 +92,7 @@ function resolve-members-recursive {
 		}         
 		elseif($groupsHT.Contains($member) -eq $true) {  # If the distinguishedName is already in our group cache...
 			write-verbose "$member already processed previously"
-			#resolve-members-recursive $groupsHT.$member # Resolve its members recursively! # comment out because it is not needed
+		#	resolve-members-recursive $groupsHT.$member # Resolve its members recursively! # comment out because it is not needed
 		}         
 		else { # If the distinguishedName is in neither cache, we find out what it is...             
 			$memberAD = Get-ADObject -Identity $member -Properties member # ... from AD!             
