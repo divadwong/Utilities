@@ -91,19 +91,19 @@ function resolve-members-recursive {
 		#	$membersHT.Add($member, $groupsHT.$member) # We add it to our members list ## comment out since I don't excluded to show on member list      
 		}         
 		elseif($groupsHT.Contains($member) -eq $true) {  # If the distinguishedName is already in our group cache...
-			write-verbose "$member already processed previously"
+			write-verbose "$member is a duplicate group"
 		#	resolve-members-recursive $groupsHT.$member # Resolve its members recursively! # comment out because it is not needed
 		}         
 		else { # If the distinguishedName is in neither cache, we find out what it is...             
 			$memberAD = Get-ADObject -Identity $member -Properties member # ... from AD!             
 			if($memberAD.objectClass -eq "group") { # If it's a group...                 
-				write-verbose "$member is a group. Add to list and resolve"   
-                $script:GroupsIn += $memberAD.Name
+				write-verbose "$member is a group. Add members to list"  
+                		$script:GroupsIn += $memberAD.Name
 				$groupsHT.Add($memberAD.distinguishedName, $memberAD.member) # We add it to our group cache
 				resolve-members-recursive $groupsHT.$member # And resolve its members recursively             
 			}             
 			else { # If it's not a group, it must be a user...                 
-				write-verbose "Add $member to memberlist"
+				write-verbose "Add $member"
 				$membersHT.Add($member, $memberAD) # So we add it to our members list             
 			}         
 		}   
@@ -117,12 +117,12 @@ if($groupToResolve -eq $null) {
 	return $null 
 } 
 else {     
-    [string[]]$GroupsIn = $null
+	[string[]]$GroupsIn = $null
 	resolve-members-recursive $groupToResolve.member
 	# Return $membersHT
-    if($GroupsIn){Write-Host "Members were also retrieved from the following groups:"
-    $GroupsIn;Write-Host "-----------------------------------------------------"}
-    if($VerbosePreference -eq "continue"){break}
+	if($GroupsIn){Write-Host "Members were also retrieved from the following groups:"
+	$GroupsIn;Write-Host "-----------------------------------------------------"}
+	if($VerbosePreference -eq "continue"){break}
 	$Members = $membersHT.Values | Select DistinguishedName, ObjectClass
 	if($Members)
 	{
