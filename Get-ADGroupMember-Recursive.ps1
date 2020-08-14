@@ -47,17 +47,17 @@ function Get-Info {
 	
 	if($EmailOnly)
 	{
-		$userlist.UserPrincipalName | Sort | Out-File -FilePath $location\results\$GroupName-Emails.txt
-		$contactlist.Name | Sort | Out-File -FilePath $location\results\$Groupname-Emails.txt -Append
-		if($neitherlist){$neitherlist | Sort | Out-File -FilePath $location\results\$Groupname-NotEmails.txt}
-		Write-host "$location\results\$GroupName-Emails.txt Created"
+		$userlist.UserPrincipalName | Sort | Out-File -FilePath $location\$GroupName-Emails.txt
+		$contactlist.Name | Sort | Out-File -FilePath $location\$Groupname-Emails.txt -Append
+		if($neitherlist){$neitherlist | Sort | Out-File -FilePath $location\$Groupname-NotEmails.txt}
+		Write-host "$location\$GroupName-Emails.txt Created"
 	}
 	else
 	{
-		$userlist | Sort UserPrincipalName | Export-CSV -Path $location\results\$Groupname-Info.csv -NoTypeInformation
-		if($contactlist){$contactlist | Sort Name  | Export-CSV -Path $location\results\$Groupname-ContactInfo.csv -NoTypeInformation}
-		if($neitherlist){$neitherlist | Sort | Out-File -FilePath $location\results\$Groupname-NeitherList.txt}
-		Write-host "$location\results\$Groupname-Info.csv Created"
+		$userlist | Sort UserPrincipalName | Export-CSV -Path $location\$Groupname-Info.csv -NoTypeInformation
+		if($contactlist){$contactlist | Sort Name  | Export-CSV -Path $location\$Groupname-ContactInfo.csv -NoTypeInformation}
+		if($neitherlist){$neitherlist | Sort | Out-File -FilePath $location\$Groupname-NeitherList.txt}
+		Write-host "$location\$Groupname-Info.csv Created"
 	}
 }
  
