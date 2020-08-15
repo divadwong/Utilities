@@ -4,8 +4,8 @@
  Moved $groupsToNotResolve into Param
  Added -OutputType "Email","Detailed","SAmAccountName","DistinguishedName" to create different outputs. 
  Email and Detailed will output to file while SAmAccountName and DistinguishedName outputs to screen.
- Comment out line 91 #$membersHT.Add($member, $groupsHT.$member) to not show excluded groups in the list.
- Comment out lines 95 #resolve-members-recursive $groupsHT.$member which is not needed and can potentially cause an infinite loop.
+ Comment out $membersHT.Add($member, $groupsHT.$member) in resolve-members-recursive function
+ Comment out 1st resolve-members-recursive in resolve-members-recursive function 
  Added Write-Verbose lines for troubleshooting.  Set $VerbosePreference = "continue" to troubleshoot
  Added Tracking of Groups it resolved ($GroupsIn)
 #> 
