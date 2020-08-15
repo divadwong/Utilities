@@ -2,7 +2,7 @@
  When it encounters a member it does not have permissiong to, it won't crash.
  Script is from https://activedirectoryfaq.com/2019/04/recursive-list-of-group-members-in-ad/
  Moved $groupsToNotResolve into Param
- Added -OutputType "Email","Detailed","SAmAccountName","DistinguishedName" to create different outputs. 
+ Added -OutputType "Email","Detailed","sAMAccountName","DistinguishedName" to create different outputs. 
  Email and Detailed will output to file while SAmAccountName and DistinguishedName outputs to screen.
  Comment out $membersHT.Add($member, $groupsHT.$member) in resolve-members-recursive function
  Comment out 1st resolve-members-recursive in resolve-members-recursive function 
@@ -12,9 +12,9 @@
 param(
 [Parameter(Mandatory = $true)][String]$groupName
 [Parameter(Mandatory = $false)][AllowEmptyCollection()][String[]]$groupsToNotResolve,
-[Parameter(Mandatory = $true)][ValidateSet("Email","Detailed","SAmAccountName","DistinguishedName")][string]$OutputType
+[Parameter(Mandatory = $false)][ValidateSet("Email","Detailed","sAMAccountName","DistinguishedName")][string]$OutputType="sAMAccountName"
 )
-$VerbosePreference = "continue"  # set to "continue" to troubleshoot, set to "silentlycontinue" for normal processing
+$VerbosePreference = "silentlycontinue"  # set to "continue" to troubleshoot, set to "silentlycontinue" for normal processing
 if($VerbosePreference -eq "silentlycontinue"){CLS}
 $groupsHT = @{} # This is our group cache 
 $membersHT = @{} # These are our members 
