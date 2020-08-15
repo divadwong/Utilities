@@ -55,7 +55,7 @@ function Get-Info {
 	else
 	{
 		$userlist | Sort UserPrincipalName | Export-CSV -Path $location\$Groupname-Info.csv -NoTypeInformation
-		if($contactlist){$contactlist | Sort Name  | Export-CSV -Path $location\$Groupname-ContactInfo.csv -NoTypeInformation}
+		if($contactlist -ne $null){$contactlist | Sort Name  | Export-CSV -Path $location\$Groupname-ContactInfo.csv -NoTypeInformation}
 		if($neitherlist){$neitherlist | Sort | Out-File -FilePath $location\$Groupname-NeitherList.txt}
 		Write-host "$location\$Groupname-Info.csv Created"
 	}
