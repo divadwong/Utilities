@@ -10,7 +10,7 @@
  Added Tracking of Groups it resolved ($GroupsIn)
 #> 
 param(
-[Parameter(Mandatory = $true)][String]$groupName
+[Parameter(Mandatory = $true)][String]$groupName,
 [Parameter(Mandatory = $false)][AllowEmptyCollection()][String[]]$groupsToNotResolve,
 [Parameter(Mandatory = $false)][ValidateSet("Email","Detailed","sAMAccountName","DistinguishedName")][string]$OutputType="sAMAccountName"
 )
