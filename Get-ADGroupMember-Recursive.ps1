@@ -119,7 +119,7 @@ if($groupToResolve -eq $null) {
 } 
 else {   
 	Write-host "Retrieving members from $Groupname ......"
-	$GroupnameDN = (Get-ADObject -LDAPFilter ("sAMAccountName=$groupname")).DistinguishedName
+	$GroupnameDN = (Get-ADObject -LDAPFilter "(sAMAccountName=$groupname)").DistinguishedName
 	[string[]]$GroupsIn = $null
 	resolve-members-recursive $groupToResolve.member
 	# Return $membersHT
