@@ -94,7 +94,7 @@ function resolve-members-recursive {
 			write-verbose "$member is a duplicate group"
 		#	resolve-members-recursive $groupsHT.$member # Resolve its members recursively! # comment out because it is not needed
 		}         
-		else { # If the distinguishedName is in neither cache, we find out what it is...             
+		elseif($GroupnameDN -ne $member) { # If the distinguishedName is in neither cache, we find out what it is if it's not $groupname             
 			$memberAD = Get-ADObject -Identity $member -Properties member # ... from AD!             
 			if($memberAD.objectClass -eq "group") { # If it's a group...                 
 				write-verbose "$member is a group. Add members to list"  
@@ -106,7 +106,8 @@ function resolve-members-recursive {
 				write-verbose "Add $member"
 				$membersHT.Add($member, $memberAD) # So we add it to our members list             
 			}         
-		}   
+		}
+		else{write-verbose "$member is a duplicate group"}
 	} 
 	write-verbose "Exit resolve-members-recursive"
 } 
@@ -116,7 +117,9 @@ if($groupToResolve -eq $null) {
 	Write-Host ($groupName + " could not be found in AD!")     
 	return $null 
 } 
-else {     
+else {   
+	Write-host "Retrieving members from $Groupname ......"
+	$GroupnameDN = (Get-ADObject -LDAPFilter ("sAMAccountName=$groupname")).DistinguishedName
 	[string[]]$GroupsIn = $null
 	resolve-members-recursive $groupToResolve.member
 	# Return $membersHT
