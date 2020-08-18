@@ -71,8 +71,9 @@ function groupShouldNotBeResolved {
 	
 	foreach($group in $groupsToNotResolve) { # We iterate through our list of groups...         
 		if($member.StartsWith(("CN=" + $group + ","), "CurrentCultureIgnoreCase") -eq $true) { # ...and check if our member matches             
-			$groupToNotResolveAD = Get-ADObject -Identity $member # If we find a match, we get it from AD             
-			$groupsHT.Add($member, $groupToNotResolveAD) # And add it to our list of groups, so we know it next time             
+			#$groupToNotResolveAD = Get-ADObject -Identity $member # If we find a match, we get it from AD             
+			#$groupsHT.Add($member, $groupToNotResolveAD) # And add it to our list of groups, so we know it next time
+			write-verbose "$group is on groupsToNotResolve list"   
 			return $true # Let caller know this group should not be resolved         
 		}     
 	}     
