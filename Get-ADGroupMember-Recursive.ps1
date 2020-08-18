@@ -86,7 +86,6 @@ function resolve-members-recursive {
 	foreach($member in $members) { # We look at each member / distinguishedName         
 		if($membersHT.Contains($member) -eq $true) { # If the distinguishedName is already in our list of members, we skip it             
 		   write-verbose "$member already added to list"
-		   continue         
 		}         
 		elseif((groupShouldNotBeResolved $member) -eq $true) { # If the member is a group that should not be resolved....             
 		#	$membersHT.Add($member, $groupsHT.$member) # We add it to our members list ## comment out since I don't excluded to show on member list      
@@ -125,6 +124,8 @@ else {
 	# Return $membersHT
 	if($GroupsIn){Write-Host "Members were also retrieved from the following groups:"
 	$GroupsIn;Write-Host "-----------------------------------------------------"}
+    	if($groupsToNotResolve){Write-Host "groupsToNotResolve list:"
+	$groupsToNotResolve;Write-Host "-----------------------------------------------------"}
 	if($VerbosePreference -eq "continue"){break}
 	$Members = $membersHT.Values | Select DistinguishedName, ObjectClass
 	if($Members)
