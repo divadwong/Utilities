@@ -1,5 +1,16 @@
 # David Wong - 8/22/20
+param(
+[Parameter(Mandatory = $true)][AllowEmptyCollection()][String[]]$Servers=$env:COMPUTERNAME,
+[Parameter(Mandatory = $false)]$ResolveGroups=$true, # to resolve the groups recursively or just list groups
+[Parameter(Mandatory = $false)]$ToFile=$true   # to write to file or screen.
+)
+
 $location = Split-Path $PSCommandPath -Parent
+#$Servers = Get-Content $location\Servers.txt   # get list of servers from file
+#$Servers = "Server1","Server2"    # get list of servers
+
+$LocalGroup = "Administrators"
+if(!($Servers)){$Servers = $env:COMPUTERNAME}
 
 function get-members{
 param($Members,$Groupname)
@@ -29,15 +40,6 @@ $Localmember = @()
 		$Groupmember | select -unique | Sort 
 	}
 }
-
-#$Servers = Get-Content $location\Servers.txt   # get list of servers from file
-$Servers = "Server1","Server2"    # get list of servers
-$Servers = $null    # to get local machine. Comment out if using other methods
-$ResolveGroups = $true # to resolve the groups recursively or just list groups
-$ToFile = $false       # to write to file or screen.
-
-$LocalGroup = "Administrators"
-if($Servers -eq $null){$Servers = $env:COMPUTERNAME}
 
 foreach($S in $Servers){
 	if($Servers -eq $env:COMPUTERNAME){$Locals = net localgroup $LocalGroup}
