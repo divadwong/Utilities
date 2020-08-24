@@ -18,7 +18,7 @@ $Groupmember = @()
 $Localmember = @()
 	foreach($member in $Members){
 		if(($member.split('\').Length - 1) -eq 0){
-		$Localmember += "$script:s\$member"
+		$Localmember += "$script:Server\$member"
 		}
 		else{
 			$sAMmember = $member.Split('\')[1]
@@ -30,9 +30,9 @@ $Localmember = @()
 	}
 	if($ToFile){
         if($Localmember -ne $null -or $Groupmember -ne $null){
-		$Localmember | Sort  | Out-File $location\$Groupname-$script:s.log
-		$Groupmember | select -unique | Sort | Out-File $location\$Groupname-$script:s.log -Append
-        write-host "$location\$Groupname-$script:s.log created"
+		$Localmember | Sort  | Out-File $location\$Groupname-$script:Server.log
+		$Groupmember | select -unique | Sort | Out-File $location\$Groupname-$script:Server.log -Append
+        write-host "$location\$Groupname-$script:Server.log created"
         }
 	}
 	else{
@@ -41,10 +41,10 @@ $Localmember = @()
 	}
 }
 
-foreach($S in $Servers){
+foreach($Server in $Servers){
 	if($Servers -eq $env:COMPUTERNAME){$Locals = net localgroup $LocalGroup}
 	else{
-		$Locals = Invoke-Command -scriptblock {net localgroup $using:LocalGroup} -ComputerName $S
+		$Locals = Invoke-Command -scriptblock {net localgroup $using:LocalGroup} -ComputerName $Server
 	}
 	$Locals = $Locals[6..($Locals.Count-3)]
 	if(-Not($ToFile)){Write-Host "`n$Localgroup on $s"}
