@@ -47,6 +47,6 @@ foreach($Server in $Servers){
 		$Locals = Invoke-Command -scriptblock {net localgroup $using:LocalGroup} -ComputerName $Server
 	}
 	$Locals = $Locals[6..($Locals.Count-3)]
-	if(-Not($ToFile)){Write-Host "`n$Localgroup on $s"}
+	if(-Not($ToFile)){Write-Host "`n$Localgroup on $Server"}
 	Get-members $Locals $Localgroup
 }	
