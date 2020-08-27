@@ -17,8 +17,8 @@ param($Members,$Groupname)
 $Groupmember = @()
 $Localmember = @()
 	foreach($member in $Members){
-		if(($member.split('\').Length - 1) -eq 0){
-		$Localmember += "$script:Server\$member"
+	        if($member -notlike '*\*'){
+			$Localmember += "$script:Server\$member"
 		}
 		else{
 			$sAMmember = $member.Split('\')[1]
