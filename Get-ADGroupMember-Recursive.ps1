@@ -28,6 +28,7 @@ function resolve-members-recursive {
 			continue         
 		}         
 		elseif($groupsToNotResolve -ne $null -and (groupShouldNotBeResolved $member) -eq $true){  # if there are groupstoNotResolve and member is on list,
+		#	$membersHT.Add($member, $groupsHT.$member) 					  # We add it to our members list?
 			continue                                                                           # move onto next member, otherwise keep processing.
 		}         
 		elseif($groupsHT.Contains($member) -eq $true) {  # If the distinguishedName is already in our group cache...
