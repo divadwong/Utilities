@@ -59,16 +59,9 @@ if ($ProcessedUsers)
 	$Output = Read-Host -Prompt 'Output to Screen or File? (S, F) Screen is default'
 	if ($Output -eq "F")
 	{
-		if (($Count) -gt 1)
-		{	
-			$ProcessedUsers | Export-CSV -Path $location\results\UserInfo.csv -NoTypeInformation
-			write-host $location\results\User-Info.csv created
-		}
-		else
-		{		
-			$ProcessedUsers | Export-CSV -Path $location\results\$Users.csv -NoTypeInformation
-			write-host $location\results\$Users.csv created
-		}
+		if ($Count -gt 1){$Filename = "UserInfo.csv"} else {$Filename = "$Users.csv"}
+		$ProcessedUsers | Export-CSV -Path $location\results\$Filename -NoTypeInformation
+		write-host $location\results\$Filename created
 	}	
 	else
 	{$ProcessedUsers}
