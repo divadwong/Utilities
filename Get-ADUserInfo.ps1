@@ -27,7 +27,14 @@ Param($InputType)
 			$Date = (get-date -format filedatetime)[0..12] -join ''; $Date +"`t"+ $Inputtype +"`t"+ $user | Out-File $location\results\GetInfo_BadID.csv -Append
 		}
 	}
-	return $userlist.values
+	[array]$ReturnResults = $userlist.values
+	if($ReturnResults.Syncroot.count -gt 0)  # If used multiple wildcards, the array will be split into syncroot. Need to combined them.
+    {
+      $CombineThem = @()
+      For ($i=0; $i -le $ReturnResults.Syncroot.Count-1; $i++){$CombineThem += $ReturnResults.Syncroot[$i]}
+      $ReturnResults = $CombineThem
+    }
+	return $ReturnResults
 }
 
 # Called from GetUserInfo.cmd and FindUser.cmd
@@ -41,18 +48,12 @@ if (-Not($users))
 	$users = Get-Content $location\Userlist-Info.txt
 }
 
-if($InputType -ne "SAmAccountName"){write-host "InputType set to $InputType"}
+write-host "InputType set to $InputType"
 write-host "Generating user info report ....."
 # Process users 
 $ProcessedUsers = ProcessList $InputType
 if ($ProcessedUsers)
 {
-    if($ProcessedUsers.Syncroot.count -gt 0)  # If used multiple wildcards, the array will be split into syncroot. Need to combined them.
-    {
-      $CombineThem = @()
-      For ($i=0; $i -le $ProcessedUsers.Syncroot.Count-1; $i++){$CombineThem += $ProcessedUsers.Syncroot[$i]}
-      $ProcessedUsers = $CombineThem
-    }
 	$ProcessedUsers = $ProcessedUsers | Sort SAmAccountName
 	$Count = $ProcessedUsers.SamAccountName.Count
 	write-host $Count users
