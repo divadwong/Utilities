@@ -29,11 +29,11 @@ Param($InputType)
 	}
 	[array]$ReturnResults = $userlist.values
 	if($ReturnResults.Syncroot.count -gt 0)  # If used multiple wildcards, the array will be split into syncroot. Need to combined them.
-    {
-      $CombineThem = @()
-      For ($i=0; $i -le $ReturnResults.Syncroot.Count-1; $i++){$CombineThem += $ReturnResults.Syncroot[$i]}
-      $ReturnResults = $CombineThem
-    }
+	{
+		$CombineThem = @()
+		For ($i=0; $i -le $ReturnResults.Syncroot.Count-1; $i++){$CombineThem += $ReturnResults.Syncroot[$i]}
+		$ReturnResults = $CombineThem
+	}
 	return $ReturnResults
 }
 
