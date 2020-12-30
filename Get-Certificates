@@ -1,0 +1,38 @@
+$Servers = "Server1","Server2","Server3"
+$Report = @()
+
+foreach($server in $Servers)
+{
+	$store = New-Object System.Security.Cryptography.X509Certificates.X509Store("\\$Server\My","LocalMachine")
+	$store.Open("ReadOnly")
+	$Certificate = $Store.Certificates
+	if(!($Certificate))
+	{
+		$Properties = [PSCustomObject]@{Server = $Server;IssuedTo = "Server not Found";IssuedBy = "Or No Access";Expires = $null;DaystoExpire = $null;Usages = $null}
+		$Report += $Properties
+	}
+
+	For ($i=0; $i -le $Certificate.Count-1; $i++)
+	{
+		$Usages = foreach($key in $Certificate[$i].Extensions)
+		{
+			if('KeyUsages' -in $key.psobject.Properties.Name ){$key.KeyUsages}
+			if('EnhancedKeyUsages' -in $key.psobject.Properties.Name){$key.EnhancedKeyUsages.FriendlyName}
+		}
+
+		$Properties = [PSCustomObject]@{    
+			Server = $Server
+			IssuedTo = ((($Certificate[$i].Subject -Split "CN=")[1] -split ",")[0] -Split "\+")[0]
+			IssuedBy = ((($Certificate[$i].Issuer -Split "CN=")[1] -split ",")[0] -Split "\+")[0]
+			Expires = $Certificate[$i].NotAfter
+			DaystoExpire = ($Certificate[$i].NotAfter – (Get-Date)).Days
+			Usages = $Usages -join ', '
+		}
+		$Report += $Properties
+	}
+}
+
+$location = Split-Path $PSCommandPath -Parent
+$Filedate = (Get-Date).ToString("yyyy-MM-dd")
+$Report | Export-CSV $location\CertExpReport_$Filedate.csv -NoTypeInformation -Force
+Write-host "Report exported to $location\CertExpReport_$Filedate.csv"
