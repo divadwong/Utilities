@@ -1,0 +1,67 @@
+# Create App Inventory report on servers from list.
+# Example Usage: Get-ServerInfo -Machinenames $MachineNames -Apps "Adobe Acrobat Reader DC","Cybereason ActiveProbe","VMware Tools"
+Param(
+	[Parameter(Mandatory=$False)]
+	[string]$ReportLocation=$null
+)
+
+Function CheckApp
+{
+Param(	
+	[Parameter(Mandatory=$True)]
+	[array]$Apps)
+
+	$AppVer = @()
+	$Installed32bitApps = Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*
+	$Installed64bitApps = Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*
+	
+	foreach($App in $Apps)
+	{
+		$Installed64bitApp = $Installed64bitApps | Where {$_.DisplayName -eq $App}
+		$Installed32bitApp = $Installed32bitApps | Where {$_.DisplayName -eq $App}
+		if ($Installed32bitApp){$Appver += $Installed32bitApp.DisplayVersion}
+		elseif ($Installed64bitApp){$Appver += $Installed64bitApp.DisplayVersion}
+		else{$Appver += "Not Installed"}
+	}
+	return (,$AppVer)
+}
+
+function Get-ServerInfo
+{
+Param(
+	[Parameter(Mandatory=$True)]
+	[array]$Apps,
+	[Parameter(Mandatory=$False)]
+	[array]$Machinenames=$null)
+	
+	if (!($MachineNames)){Write-Host "Please supply -Machinenames parameter";Break}
+	$userReport = @()
+	
+	write-host "Processing ....."
+	foreach ($Machine in $MachineNames)
+	{
+		Write-host $Machine
+		$GetAppVer = Invoke-Command -ScriptBlock ${function:CheckApp} -Argumentlist (,$Apps) -ComputerName $Machine
+		if(!($GetAppVer)){$GetAppVer=@('Unknown','Unknown','Unknown','Unknown','Unknown')}
+		
+		$Properties = [PSCustomObject]@{Server = $Machine}
+		For ($i=0; $i -le $Apps.Count-1; $i++)
+			{$Properties | Add-Member -MemberType NoteProperty -Name $Apps[$i].Replace(" ","") -Value $GetAppver[$i]}
+		$userReport += $Properties
+	}
+	if ($UserReport)
+	{
+		if(!($ReportLocation)){$ReportLocation = Split-Path $PSCommandPath -Parent}
+		$FileDateTime = get-date -format filedatetime
+		$FileDateTime = $FileDateTime[0..12] -join ''
+		$TodaysDate = (Get-Date).ToString("yyyy-MM-dd")
+		$TodaysFile = "$ReportLocation\AppsInv_$FileDateTime.csv"
+		$UserReport | Select * | Sort Server | Export-CSV -Path $TodaysFile -NoTypeInformation
+		write-host "See results in $TodaysFile"
+	}
+	else {write-host "No Results"}
+}
+
+# Get Server inventory by Serverlist file
+$location = Split-Path $PSCommandPath -Parent;[string[]]$MachineNames = Get-Content $location\Server-AppInv.txt
+Get-ServerInfo -Machinenames $MachineNames -Apps "Adobe Acrobat Reader DC","Cybereason ActiveProbe","VMware Tools"
