@@ -9,7 +9,6 @@ Param(
 $location = Split-Path $PSCommandPath -Parent
 if(!($Servers)){[string[]]$Servers = Get-Content $location\Servers-GetCertificates.txt}
 $Report = @()
-[string]$Server=$null
 
 if($FilterIssuerbyName){Write-host "Displaying only Certificates Issued By $FilterIssuerbyName"`n}
 write-host "Processing ....."
