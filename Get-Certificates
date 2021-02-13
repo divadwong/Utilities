@@ -1,14 +1,28 @@
-$Servers = "Server1","Server2","Server3"
-$Report = @()
+Param(
+	[Parameter(Mandatory=$False)]
+	[string[]]$Servers,
+	[Parameter(Mandatory=$False)]
+	[Switch]$Filtered=$False
+)
 
-foreach($server in $Servers)
+$FilterIssuebyName = "Your Issuer Here"
+#$Servers = "Server1","Server2"   # unrem for testing
+$location = Split-Path $PSCommandPath -Parent
+if(!($Servers)){[string[]]$Servers = Get-Content $location\Servers-GetCertificates.txt}
+$Report = @()
+[string]$Server=$null
+
+if($Filtered){Write-host "Displaying only Certificates Issued By $FilterIssuebyName"`n}
+write-host "Processing ....."
+foreach($Server in $Servers)
 {
+	Write-host $Server
 	$store = New-Object System.Security.Cryptography.X509Certificates.X509Store("\\$Server\My","LocalMachine")
 	$store.Open("ReadOnly")
 	$Certificate = $Store.Certificates
 	if(!($Certificate))
 	{
-		$Properties = [PSCustomObject]@{Server = $Server;IssuedTo = "Server not Found";IssuedBy = "Or No Access";Expires = $null;DaystoExpire = $null;Usages = $null}
+		$Properties = [PSCustomObject]@{Server = $Server;IssuedTo = "ERROR occurred";IssuedBy = $Error[0].Exception;Expires = $null;DaystoExpire = $null;Usages = $null}
 		$Report += $Properties
 	}
 
@@ -28,11 +42,12 @@ foreach($server in $Servers)
 			DaystoExpire = ($Certificate[$i].NotAfter – (Get-Date)).Days
 			Usages = $Usages -join ', '
 		}
-		$Report += $Properties
-	}
+		if($Filtered -eq $False){$Report += $Properties}
+		elseif($Certificate[$i].Issuer -like "*$FilterIssuebyName*"){$Report += $Properties}
+    }
 }
-
-$location = Split-Path $PSCommandPath -Parent
+  
 $Filedate = (Get-Date).ToString("yyyy-MM-dd")
 $Report | Export-CSV $location\CertExpReport_$Filedate.csv -NoTypeInformation -Force
 Write-host "Report exported to $location\CertExpReport_$Filedate.csv"
+$Report | ogv -Title "Certicate Report" -Wait
