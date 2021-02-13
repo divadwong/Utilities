@@ -2,17 +2,16 @@ Param(
 	[Parameter(Mandatory=$False)]
 	[string[]]$Servers,
 	[Parameter(Mandatory=$False)]
-	[Switch]$Filtered=$False
+	[string]$FilterIssuebyName = "Your Issuer Here" # use $null if you do not want to filter
 )
 
-$FilterIssuebyName = "Your Issuer Here"
 #$Servers = "Server1","Server2"   # unrem for testing
 $location = Split-Path $PSCommandPath -Parent
 if(!($Servers)){[string[]]$Servers = Get-Content $location\Servers-GetCertificates.txt}
 $Report = @()
 [string]$Server=$null
 
-if($Filtered){Write-host "Displaying only Certificates Issued By $FilterIssuebyName"`n}
+if($FilterIssuebyName){Write-host "Displaying only Certificates Issued By $FilterIssuebyName"`n}
 write-host "Processing ....."
 foreach($Server in $Servers)
 {
@@ -42,7 +41,7 @@ foreach($Server in $Servers)
 			DaystoExpire = ($Certificate[$i].NotAfter – (Get-Date)).Days
 			Usages = $Usages -join ', '
 		}
-		if($Filtered -eq $False){$Report += $Properties}
+		if($FilterIssuebyName -eq $False){$Report += $Properties}
 		elseif($Certificate[$i].Issuer -like "*$FilterIssuebyName*"){$Report += $Properties}
     }
 }
