@@ -40,13 +40,18 @@ Param(
 	write-host "Processing ....."
 	foreach ($Machine in $MachineNames)
 	{
+		$Unknown = $False
 		Write-host $Machine
 		$GetAppVer = Invoke-Command -ScriptBlock ${function:CheckApp} -Argumentlist (,$Apps) -ComputerName $Machine
-		if(!($GetAppVer)){$GetAppVer=@('Unknown','Unknown','Unknown','Unknown','Unknown')}
+		if(!($GetAppVer)){$Unknown = $True)}
 		
 		$Properties = [PSCustomObject]@{Server = $Machine}
-		For ($i=0; $i -le $Apps.Count-1; $i++)
+		For ($i=0; $i -lt $Apps.Count; $i++)
+		{
+			if($Unknown){$Properties | Add-Member -MemberType NoteProperty -Name $Apps[$i].Replace(" ","") -Value "Unknown"}
+			else
 			{$Properties | Add-Member -MemberType NoteProperty -Name $Apps[$i].Replace(" ","") -Value $GetAppver[$i]}
+		}
 		$userReport += $Properties
 	}
 	if ($UserReport)
