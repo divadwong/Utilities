@@ -24,7 +24,7 @@ foreach($Server in $Servers)
 		$Report += $Properties
 	}
 
-	For ($i=0; $i -le $Certificate.Count-1; $i++)
+	For ($i=0; $i -lt $Certificate.Count; $i++)
 	{
 		$Usages = foreach($key in $Certificate[$i].Extensions)
 		{
