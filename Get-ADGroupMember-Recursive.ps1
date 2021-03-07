@@ -35,7 +35,7 @@ function resolve-members-recursive {
 			continue
 		}         
 		elseif($groupToResolve.DistinguishedName -ne $member)  { # If the distinguishedName is in neither cache, we find out what it is...         
-			$memberAD = Get-ADObject -Identity $member -Properties member # ... from AD!             
+			$memberAD = Get-ADObject -Identity $member -Properties member, Mail, SamAccountName  # ... from AD!             
 			if($memberAD.objectClass -eq "group") { # If it's a group...                 
 				$groupsHT.Add($memberAD.distinguishedName, $memberAD.member) # We add it to our group cache
 				resolve-members-recursive $groupsHT.$member # And resolve its members recursively             
@@ -54,11 +54,7 @@ if($groupToResolve -eq $null) {
 } 
 else {     
 	resolve-members-recursive $groupToResolve.member
-	$Members = $membersHT.Values | Select DistinguishedName
-	if($Members)
-	{
-		$sAMAccountName = ($Members.DistinguishedName | ForEach-Object{[adsi]"GC://$_"}).sAMAccountName | Sort
-		Return $sAMAccountName
-	}
+	$Members = $membersHT.Values | Select DistinguishedName, SamAccountName
+	if($Members) {Return $Members.SamAccountName | Sort}
 	else {return $null}
 } 
