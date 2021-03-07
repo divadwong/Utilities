@@ -31,7 +31,7 @@ Param($InputType)
 	if($ReturnResults.Syncroot.count -gt 0)  # If used multiple wildcards, the array will be split into syncroot. Need to combined them.
 	{
 		$CombineThem = @()
-		For ($i=0; $i -le $ReturnResults.Syncroot.Count-1; $i++){$CombineThem += $ReturnResults.Syncroot[$i]}
+		For ($i=0; $i -lt $ReturnResults.Syncroot.Count; $i++){$CombineThem += $ReturnResults.Syncroot[$i]}
 		$ReturnResults = $CombineThem
 	}
 	return $ReturnResults
@@ -54,14 +54,13 @@ write-host "Generating user info report ....."
 $ProcessedUsers = ProcessList $InputType
 if ($ProcessedUsers)
 {
-	$ProcessedUsers = $ProcessedUsers | Sort SAmAccountName
 	$Count = $ProcessedUsers.SamAccountName.Count
 	write-host $Count users
 	$Output = Read-Host -Prompt 'Output to Screen or File? (S, F) Screen is default'
 	if ($Output -eq "F")
 	{
 		if ($Count -gt 1){$Filename = "UserInfo.csv"} else {$Filename = "$Users.csv"}
-		$ProcessedUsers | Export-CSV -Path $location\results\$Filename -NoTypeInformation
+		$ProcessedUsers | Sort $InputType | Export-CSV -Path $location\results\$Filename -NoTypeInformation
 		write-host $location\results\$Filename created
 	}	
 	else
