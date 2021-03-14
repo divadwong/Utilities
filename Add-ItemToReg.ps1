@@ -9,11 +9,11 @@ param(
 
 	$CheckItem = @(); $AddItem = ''
 	if($AppendSemi){$Semi = ";"}
-	$GetNameInfo = Get-ItemProperty $Key -Name $Name -EA SilentlyContinue
+	$GetNameInfo = Get-ItemProperty $Key -Name $Name -EA 0
 	if($GetNameInfo)
 	{$CheckItem = (($GetNameInfo.$Name).Split(';') -ne '').Trim() | Sort -Unique}
 	else
-	{New-Item -Path $Key -Force -EA Continue | Out-Null}
+	{New-Item -Path $Key -Force -EA 0 | Out-Null}
 	if($CheckItem -notcontains $Item)
 	{
 		if($CheckItem){$AddItem = ($CheckItem -join ';') + ";$Item"+$Semi}
