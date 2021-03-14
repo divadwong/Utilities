@@ -30,4 +30,5 @@ param(
 	{Write-Host "$Item already in $Key\$Name"}
 }
 
-Add-ItemToReg -Key HKCU:\Test\Test1\Test2 -Name Test -Item msedge3.exe
+#  Add an Item to a registry string. ie. below ex. will append to HKCU:\PathTest\Path = c:\path1;c:\path2;c:\path3
+Add-ItemToReg -Key HKCU:\PathTest -Name Path -Item c:\path4
