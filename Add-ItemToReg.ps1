@@ -16,13 +16,13 @@ param(
 	if($AppendSemi){$Semi = ";"}
 	$GetNameInfo = Get-ItemProperty $Key -Name $Name -EA 0
 	if($GetNameInfo)
-	{$CheckItem = (($GetNameInfo.$Name).Split(';') -ne '').Trim() | Sort -Unique}
+	{$CheckItem = (($GetNameInfo.$Name).Split(';') -ne '').Trim() | Sort -Unique}    # Remove duplicates, spaces and double semicolons from list
 	else
-	{New-Item -Path $Key -Force -EA 0 | Out-Null}
+	{New-Item -Path $Key -Force -EA 0 | Out-Null}                                    # Create Registry Key if it does not exist
 	if($CheckItem -notcontains $Item)
-	{
-		if($CheckItem){$AddItem = ($CheckItem -join ';') + ";$Item"+$Semi}
-		else{$AddItem = $Item + $Semi}
+	{  # Append Item to end of string. Also add semicolon to end if -AppendSemi parameter used.
+		if($CheckItem){$AddItem = ($CheckItem -join ';') + ";$Item"+$Semi}       # Add to existing list 
+		else{$AddItem = $Item + $Semi}                                           # Add to empty list
 	
 		try{
 			New-ItemProperty -Path $Key -Name $Name -PropertyType String -Value $AddItem -Force -EA Stop | Out-Null
