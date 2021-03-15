@@ -1,9 +1,9 @@
 # Add an Item to a registry string.
-# ie. Add-ItemToReg -Key HKCU:\PathTest -Name Path -Item c:\path3                HKCU:\PathTest\Path = c:\path1;c:\path2;c:\path3
+# ie. Add-ItemToListInReg -Key HKCU:\PathTest -Name Path -Item c:\path3                HKCU:\PathTest\Path = c:\path1;c:\path2;c:\path3
 # Optional switch -AppendSemi will add a semicolon at end of the string. 
-# ie. Add-ItemToReg -Key HKCU:\PathTest -Name Path -Item c:\path3 -AppendSemi    HKCU:\PathTest\Path = c:\path1;c:\path2;c:\path3;
+# ie. Add-ItemToListInReg -Key HKCU:\PathTest -Name Path -Item c:\path3 -AppendSemi    HKCU:\PathTest\Path = c:\path1;c:\path2;c:\path3;
 
-function Add-ItemToReg
+function Add-ItemToListInReg
 {
 param(
 [Parameter(Mandatory = $true)][String]$Key,
