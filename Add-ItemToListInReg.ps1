@@ -23,7 +23,7 @@ param(
 	}
 	else
 	{   # Create Registry Key if it does not exist
-		if(!(Test-Path $Key)){New-Item -Path $Key -Force -EA 0 | Out-Null ; $Prev = "did not exist and was created"}
+		if(!(Test-Path $Key)){New-Item -Path $Key -Force -EA 0 | Out-Null ; $Prev = "did not exist and key was created"}
 		else{$Prev = "did not exist"}
 	}                             
 	if($CheckItem -notcontains $Item)
@@ -33,26 +33,21 @@ param(
 	
 		try{
 			New-ItemProperty -Path $Key -Name $Name -PropertyType String -Value $AddItem -Force -EA Stop | Out-Null
-			WriteAppNameLog "$Key\$Name previously $Prev"
-			WriteAppNameLog "$Key\$Name set to $AddItem"
-			$script:eMailMessage += "`r$Key\$Name set to $AddItem, "
-			$PromptReboot = $True
+			Write-Host "$Key\$Name previously $Prev"
+			Write-Host "$Key\$Name set to $AddItem"
 		}
 	
 		catch{
-			WriteAppNameLog "Failed to append $Item to $Key\$Name"
-			$script:eMailMessage += "`rFailed to append $Item to $Key\$Name, "
-			$PostInstallStatus = $False
+			Write-Host "Failed to append $Item to $Key\$Name"
 		}
 	}
 	else
 	{
-		WriteAppNameLog "$Item already in $Key\$Name"
-		$script:eMailMessage += "`r$Item already in $Key\$Name, "
+		Write-Host "$Item already in $Key\$Name"
 		$AddItem = ($CheckItem -join ';') + $Semi
 		New-ItemProperty -Path $Key -Name $Name -PropertyType String -Value $AddItem -Force -EA Stop | Out-Null
-		WriteAppNameLog "$Key\$Name previously $Prev"
-		WriteAppNameLog "Cleaned up list $Key\$Name to $AddItem"
+		Write-Host "$Key\$Name previously $Prev"
+		Write-Host "Cleaned up list $Key\$Name to $AddItem"
 	}
 }
 
