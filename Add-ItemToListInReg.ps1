@@ -20,7 +20,7 @@ param(
 	if($GetNameInfo)
 	{
 		$Prev = "was " + $GetNameInfo.$Name
-		$CheckItem = (($GetNameInfo.$Name).Split($Delim) -ne '').Trim() | Sort -Unique # Remove duplicates, spaces and double semicolons from list
+		$CheckItem = (($GetNameInfo.$Name).Split($Delim) -ne '').Trim() | Sort -Unique            # Remove duplicates, spaces and empty items from list
 	}
 	else
 	{   # Create Registry Key if it does not exist
@@ -29,7 +29,7 @@ param(
 	}                             
 	if($CheckItem -notcontains $Item)
 	{   # Append Item to end of string. Also add semicolon to end if -AppendEnd parameter used.
-		if($CheckItem){$AddItem = ($CheckItem -join $Delim) + $Delim + $Item + $AppDelimEnd}       # Add to existing list 
+		if($CheckItem){$AddItem = ($CheckItem -join $Delim) + $Delim + $Item + $AppDelimEnd}      # Add to cleaned up existing list 
 		else{$AddItem = $Item + $AppDelimEnd}     
 	
 		try{
