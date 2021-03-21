@@ -9,10 +9,11 @@ param(
 [Parameter(Mandatory = $true)][String]$Key,
 [Parameter(Mandatory = $true)][String]$Name,
 [Parameter(Mandatory = $true)][String]$Item,
+[Parameter(Mandatory = $false)][String]$Delim = ';',
 [Parameter(Mandatory = $false)][Switch]$AppendEnd
 )
 
-	if($AppendEnd){$Delim = ";"}
+	if($AppendEnd){$AppDelimEnd = $Delim}
 	$CheckItem = @(); $AddItem = ''
 	$GetNameInfo = Get-ItemProperty $Key -Name $Name -EA 0
 	
@@ -28,8 +29,8 @@ param(
 	}                             
 	if($CheckItem -notcontains $Item)
 	{   # Append Item to end of string. Also add semicolon to end if -AppendEnd parameter used.
-		if($CheckItem){$AddItem = ($CheckItem -join $Delim) + $Delim + "$Item" + $Delim}       # Add to existing list 
-		else{$AddItem = $Item + $Delim}                                                          # Add to empty list
+		if($CheckItem){$AddItem = ($CheckItem -join $Delim) + $Delim + $Item + $AppDelimEnd}       # Add to existing list 
+		else{$AddItem = $Item + $AppDelimEnd}     
 	
 		try{
 			New-ItemProperty -Path $Key -Name $Name -PropertyType String -Value $AddItem -Force -EA Stop | Out-Null
