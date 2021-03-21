@@ -20,7 +20,7 @@ param(
 	if($GetNameInfo)
 	{
 		$Prev = "was " + $GetNameInfo.$Name
-		$CheckItem = (($GetNameInfo.$Name).Split(';') -ne '').Trim() | Sort -Unique # Remove duplicates, spaces and double semicolons from list
+		$CheckItem = (($GetNameInfo.$Name).Split($Delim) -ne '').Trim() | Sort -Unique # Remove duplicates, spaces and double semicolons from list
 	}
 	else
 	{   # Create Registry Key if it does not exist
@@ -45,7 +45,7 @@ param(
 	else
 	{
 		Write-Host "$Item already in $Key\$Name"
-		$AddItem = ($CheckItem -join ';') + $Delim
+		$AddItem = ($CheckItem -join $Delim) + $AppDelimEnd
 		New-ItemProperty -Path $Key -Name $Name -PropertyType String -Value $AddItem -Force -EA Stop | Out-Null
 		Write-Host "$Key\$Name previously $Prev"
 		Write-Host "Cleaned up list $Key\$Name to $AddItem"
