@@ -60,7 +60,7 @@ param(
 	}
 	else
 	{
-		WriteAppNameLog "Previously $Prev"
+		Write-Host "Previously $Prev"
 		Write-Host "$Item already in $Key\$Name"
 		if($Cleanup)
 		{
